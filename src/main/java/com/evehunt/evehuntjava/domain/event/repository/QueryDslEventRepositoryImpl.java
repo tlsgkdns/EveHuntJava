@@ -35,7 +35,7 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
     @Override
     public Page<EventCardResponse> searchEvents(PageRequest request) {
         Pageable pageable = request.getPageable();
-        String keyword = request.getKeyword();
+        String keyword = request.keyword();
         JPQLQuery<EventCardResponse> query = from(event).select(Projections.constructor(
                 EventCardResponse.class,
                 event.id,
@@ -46,9 +46,10 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
                 from(participant).select(participant.count()).where(participant.event.eq(event)),
                 event.image
         )).leftJoin(event.image, image);
-        if(!keyword.isEmpty())
+        if(keyword != null && !keyword.isEmpty())
         {
-            switch (request.getSearchType().toLowerCase())
+            String searchType = (request.searchType() != null) ? request.searchType().toLowerCase() : "";
+            switch (searchType)
             {
                 case "description" -> query.from(event).where(event.description.contains(keyword));
                 case "titledescription" -> {
@@ -77,22 +78,23 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
                 }
             }
         }
-        switch (request.getSortType().toLowerCase())
+        String sortType = request.sortType() != null ? request.sortType().toLowerCase() : "";
+        switch (sortType)
         {
             case "close" -> {
-            if(!request.getAsc()) query.orderBy(event.closeAt.desc());
+            if(!request.asc()) query.orderBy(event.closeAt.desc());
             else query.orderBy(event.closeAt.desc());
             }
             case "host" -> {
-            if(!request.getAsc()) query.orderBy(event.host.name.desc());
+            if(!request.asc()) query.orderBy(event.host.name.desc());
             else query.orderBy(event.host.name.asc());
             }
             case "title" -> {
-            if(!request.getAsc()) query.orderBy(event.title.desc());
+            if(!request.asc()) query.orderBy(event.title.desc());
             else query.orderBy(event.title.asc());
             }
             default -> {
-            if(!request.getAsc()) query.orderBy(event.createdAt.desc());
+            if(!request.asc()) query.orderBy(event.createdAt.desc());
             else query.orderBy(event.createdAt.asc());
             }
         }

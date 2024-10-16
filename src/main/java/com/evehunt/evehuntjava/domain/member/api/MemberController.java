@@ -52,6 +52,7 @@ public class MemberController {
     @GetMapping
     @NotNull
     public ResponseEntity<MemberResponse> getLoginMember(@AuthenticationPrincipal UserDetails userDetails) {
+        if(userDetails == null) return null;
         return ResponseEntity.status(HttpStatus.OK).body(memberService.getMember(userDetails.getUsername()));
     }
 
@@ -90,6 +91,7 @@ public class MemberController {
     @GetMapping({"/events"})
     @NotNull
     public ResponseEntity<PageResponse<ParticipateResponse>> getParticipateHistoryByMember(@AuthenticationPrincipal @NotNull UserDetails user, @NotNull PageRequest pageRequest) {
+        System.out.println(user);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.getParticipatedEvents(pageRequest, user.getUsername()));
     }
 

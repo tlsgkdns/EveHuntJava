@@ -40,7 +40,7 @@ public class ParticipantServiceImpl implements ParticipantService{
         if(participant == null) throw new ModelNotFoundException("Participant", email);
         return participant;
     }
-    @RedisLock
+    @RedisLock(lockName = "Event")
     @Override
     public ParticipateResponse participateEvent(Long id, String email, ParticipateRequest request) {
         if(participantRepository.getParticipant(id, email) != null) throw new AlreadyExistModelException(email);
@@ -50,7 +50,7 @@ public class ParticipantServiceImpl implements ParticipantService{
         if(participantRepository.getParticipantsByEvent(id).size() + 1 > event.getCapacity())
             throw new InvalidModelException("Event");
         Participant participant = request.to(event, member);
-        return ParticipateResponse.from(participant);
+        return ParticipateResponse.from(participantRepository.save(participant));
     }
 
     @Override

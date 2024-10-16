@@ -85,12 +85,12 @@ public class PageResponse<T> {
     }
     @NotNull
     public static <T> PageResponse<T> of(@NotNull PageRequest pageRequestDTO, @NotNull List<T> dtoList, int total) {
-        int page = pageRequestDTO.getPage();
-        int size = pageRequestDTO.getSize();
+        int page = pageRequestDTO.page();
+        int size = pageRequestDTO.size();
         double last = Math.ceil( (double)total / (double)size);
         int end = (int)Math.min(Math.ceil((double)page / 10.0) * 10, last);
         int start = (int)(Math.ceil((double)page / 10.0) * (double)10) - 9;
-        return new PageResponse<>(page, size, pageRequestDTO.getSortType(), pageRequestDTO.getKeyword(), pageRequestDTO.getSearchType(),
-                pageRequestDTO.getAsc(), total, start, end, (start > 1), total > end * size, dtoList);
+        return new PageResponse<>(page, size, pageRequestDTO.sortType(), pageRequestDTO.keyword(), pageRequestDTO.searchType(),
+                pageRequestDTO.asc(), total, start, end, (start > 1), total > end * size, dtoList);
     }
 }

@@ -94,7 +94,7 @@ public class EventEntityServiceImpl implements EventEntityService{
 
     @Transactional
     @NotNull
-    public EventResponse announceEvent(@Nullable Long eventId) {
+    public EventResponse announceEvent(Long eventId) {
         Event event = this.getExistEvent(eventId);
         event.setEventStatus(EventStatus.ANNOUNCED);
         return EventResponse.from(eventRepository.save(event));

@@ -14,6 +14,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
+import java.lang.reflect.Parameter;
 import java.util.concurrent.TimeUnit;
 
 @Aspect
@@ -32,13 +33,21 @@ public class LockAOP{
     private Object tryLock(ProceedingJoinPoint proceedingJoinPoint) throws Throwable
     {
         MethodSignature signature = (MethodSignature)proceedingJoinPoint.getSignature();
-        String lockName = signature.getMethod().getAnnotation(RedisLock.class).lockName();
+        StringBuilder lockName = new StringBuilder(lockPrefix + " " + signature.getMethod().getAnnotation(RedisLock.class).lockName() + " ");
+        Object[] parameterValues = proceedingJoinPoint.getArgs();
+        Parameter[] parameters = signature.getMethod().getParameters();
+         for(int i = 0; i < parameters.length; i++)
+             if(parameters[i].getName().equals("id"))
+             {
+                 lockName.append((Long) parameterValues[i]);
+                 break;
+             }
         TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
-        RLock rLock = redissonClient.getLock(lockPrefix + lockName);
+        RLock rLock = redissonClient.getLock(lockName.toString());
         boolean available = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS);
         try {
             if(!available){
-                throw new LockTimeoutException(lockName);
+                throw new LockTimeoutException(lockName.toString());
             }
             try {
                 Object ret = proceedingJoinPoint.proceed();
@@ -46,7 +55,7 @@ public class LockAOP{
                 return ret;
             } catch (RuntimeException e) {
               transactionManager.commit(status);
-              throw new LockTimeoutException(lockName);
+              throw new LockTimeoutException(lockName.toString());
             }
         } finally {
             if (rLock.isHeldByCurrentThread()) {
