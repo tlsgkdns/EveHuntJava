@@ -48,8 +48,7 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
         )).leftJoin(event.image, image);
         if(keyword != null && !keyword.isEmpty())
         {
-            String searchType = (request.searchType() != null) ? request.searchType().toLowerCase() : "";
-            switch (searchType)
+            switch (request.searchType().toLowerCase())
             {
                 case "description" -> query.from(event).where(event.description.contains(keyword));
                 case "titledescription" -> {
@@ -78,8 +77,7 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
                 }
             }
         }
-        String sortType = request.sortType() != null ? request.sortType().toLowerCase() : "";
-        switch (sortType)
+        switch (request.searchType().toLowerCase())
         {
             case "close" -> {
             if(!request.asc()) query.orderBy(event.closeAt.desc());
