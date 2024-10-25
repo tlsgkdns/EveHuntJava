@@ -10,6 +10,7 @@ import com.evehunt.evehuntjava.global.exception.exception.ModelNotFoundException
 import com.evehunt.evehuntjava.global.exception.exception.UnMatchedValueException;
 import com.evehunt.evehuntjava.global.infra.security.TokenProvider;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,6 +65,7 @@ public class MemberEntityServiceImpl implements MemberEntityService{
 
     @Override
     @Transactional
+    @PostAuthorize("isAuthenticated() and returnObject.email == principal.username")
     public MemberResponse editMember(Long memberId, MemberEditRequest memberEditRequest) {
         Member member = getExistMember(memberId);
         String name = memberEditRequest.getNewName() == null ? member.getName() : memberEditRequest.getNewName();
@@ -95,6 +97,7 @@ public class MemberEntityServiceImpl implements MemberEntityService{
 
     @Override
     @Transactional
+    @PostAuthorize("isAuthenticated() and returnObject.email == principal.username")
     public MemberResponse editPassword(Long memberId, MemberPasswordEditRequest memberPasswordEditRequest) {
         if(!Objects.equals(memberPasswordEditRequest.getPasswordCheck(), memberPasswordEditRequest.getNewPassword()))
             throw new UnMatchedValueException("새 비밀번호", "새 비밀번호 확인");

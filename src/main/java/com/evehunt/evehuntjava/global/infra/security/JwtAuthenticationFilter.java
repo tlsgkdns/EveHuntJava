@@ -49,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
         String validateToken = tokenProvider.validateTokenAndGetSubject(token);
         if(validateToken == null) validateToken = "anonymous:anonymous";
         String[] list = validateToken.split(":");
-        String authString = list[1].substring(1, list[1].length() - 1).chars().filter(c -> c != ' ').toString();
+        String authString = list[1].substring(1, list[1].length() - 1);
         return new User(list[0], "",  Arrays.stream(authString.split(",")).map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
     }
 

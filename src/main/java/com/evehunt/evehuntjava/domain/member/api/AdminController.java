@@ -19,7 +19,7 @@ public class AdminController {
     @PostMapping()
     @NotNull
     public ResponseEntity<MemberResponse> registerAdmin(@RequestBody @NotNull MemberRegisterRequest memberRegisterRequest) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.registerMember(memberRegisterRequest));
+        return ResponseEntity.status(HttpStatus.CREATED).body(memberService.registerAdmin(memberRegisterRequest));
     }
 
     public AdminController(@NotNull MemberService memberService) {

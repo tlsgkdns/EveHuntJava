@@ -33,8 +33,8 @@ public class QueryDslReportRepositoryImpl extends QuerydslRepositorySupport impl
                 else orderBy = report.event.title.asc();
             }
             default: {
-                if(!pageRequest.asc()) report.createdAt.desc();
-                else report.createdAt.asc();
+                if(!pageRequest.asc()) orderBy = report.createdAt.desc();
+                else orderBy = report.createdAt.asc();
             }
         }
         if(!pageRequest.keyword().isEmpty())
