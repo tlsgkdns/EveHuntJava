@@ -5,12 +5,9 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(force = true)
 public class MemberSignInRequest {
-    @NotNull
     private final String email;
-    @NotNull
     private final String password;
 
-    @NotNull
     public final String getEmail() {
         return this.email;
     }

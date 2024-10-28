@@ -105,8 +105,6 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
         BooleanBuilder whereClause = new BooleanBuilder(event.eventStatus.eq(EventStatus.PROCEED).and(event.closeAt.before(ZonedDateTime.now())));
         List<EventIdResponse> list = from(event).select(Projections.constructor(EventIdResponse.class, event.id)).where(whereClause).fetch();
         update(event).set(event.eventStatus, EventStatus.CLOSED).where(whereClause).execute();
-        getEntityManager().clear();
-        getEntityManager().flush();
         return list;
     }
 
@@ -125,6 +123,4 @@ public class QueryDslEventRepositoryImpl extends QuerydslRepositorySupport imple
         if(list.fetch().size() > 5) return list.limit(5).fetch();
         return list.fetch();
     }
-
-    //Long id, @NotNull String hostName, @NotNull String title, int capacity, @NotNull LocalDateTime closeAt, int participantCount, String eventImage
 }

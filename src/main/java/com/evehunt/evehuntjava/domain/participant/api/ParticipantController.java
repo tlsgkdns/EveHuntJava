@@ -26,7 +26,7 @@ public class ParticipantController {
 
     @PostMapping
     @NotNull
-    public ResponseEntity<ParticipateResponse> participateEvents(@PathVariable long eventId, @AuthenticationPrincipal @NotNull UserDetails user, @RequestBody @NotNull ParticipateRequest participateRequest) {
+    public ResponseEntity<ParticipateResponse> participateEvents(@PathVariable long eventId, @AuthenticationPrincipal UserDetails user, @RequestBody ParticipateRequest participateRequest) {
         return ResponseEntity.status(HttpStatus.CREATED).body(eventService.participateEvent(eventId, user.getUsername(), participateRequest));
     }
 

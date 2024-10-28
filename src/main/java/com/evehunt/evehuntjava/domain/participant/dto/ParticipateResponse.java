@@ -3,8 +3,10 @@ package com.evehunt.evehuntjava.domain.participant.dto;
 import com.evehunt.evehuntjava.domain.participant.model.Participant;
 import com.evehunt.evehuntjava.domain.participant.model.ParticipantStatus;
 import jakarta.validation.constraints.NotNull;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(force = true)
 public class ParticipateResponse {
     private final Long id;
@@ -19,37 +21,10 @@ public class ParticipateResponse {
 
     private final String email;
 
-    public final Long getId() {
-        return this.id;
-    }
-
-
-    public final Long getEventId() {
-        return this.eventId;
-    }
-
-
-    public final Long getMemberId() {
-        return this.memberId;
-    }
-
-    @NotNull
-    public final String getAnswer() {
-        return this.answer;
-    }
-
-    @NotNull
-    public final ParticipantStatus getStatus() {
-        return this.status;
-    }
-
     public final void setStatus(@NotNull ParticipantStatus status) {
         this.status = status;
     }
 
-    public final String getEmail() {
-        return this.email;
-    }
 
     public ParticipateResponse(Long id, Long eventId, Long memberId,
                                @NotNull String answer, @NotNull ParticipantStatus status, String email) {

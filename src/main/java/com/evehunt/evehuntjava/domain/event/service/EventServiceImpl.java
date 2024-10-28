@@ -48,9 +48,12 @@ public class EventServiceImpl implements EventService{
     @Override
     public EventResponse hostEvent(EventHostRequest request, String email) {
         EventResponse event = eventEntityService.hostEvent(request, email);
-        for(TagAddRequest tagAddRequest : request.getTagAddRequests())
+        if(request.getTagAddRequests() != null)
         {
-            tagService.addTag(event.getId(), tagAddRequest);
+            for(TagAddRequest tagAddRequest : request.getTagAddRequests())
+            {
+                tagService.addTag(event.getId(), tagAddRequest);
+            }
         }
         return event;
     }

@@ -17,4 +17,5 @@ public interface QueryDslEventRepository {
 
     @NotNull
     List<EventCardResponse> getPopularEvents();
+
 }

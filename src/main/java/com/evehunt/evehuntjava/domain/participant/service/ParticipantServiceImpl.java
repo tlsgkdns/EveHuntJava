@@ -13,6 +13,7 @@ import com.evehunt.evehuntjava.domain.participant.model.ParticipantStatus;
 import com.evehunt.evehuntjava.domain.participant.model.strategy.PickWinnerStrategy;
 import com.evehunt.evehuntjava.domain.participant.model.strategy.PickWinnerTwoPointer;
 import com.evehunt.evehuntjava.domain.participant.repository.ParticipantRepository;
+import com.evehunt.evehuntjava.global.common.NamedLockRepository;
 import com.evehunt.evehuntjava.global.common.page.PageRequest;
 import com.evehunt.evehuntjava.global.common.page.PageResponse;
 import com.evehunt.evehuntjava.global.exception.exception.AlreadyExistModelException;
@@ -22,6 +23,8 @@ import com.evehunt.evehuntjava.global.infra.aop.annotation.RedisLock;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -40,16 +43,23 @@ public class ParticipantServiceImpl implements ParticipantService{
         if(participant == null) throw new ModelNotFoundException("Participant", email);
         return participant;
     }
-    @RedisLock(lockName = "Event")
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
     public ParticipateResponse participateEvent(Long id, String email, ParticipateRequest request) {
-        if(participantRepository.getParticipant(id, email) != null) throw new AlreadyExistModelException(email);
-        Event event = getExistEvent(id);
-        Member member = memberRepository.findMemberByEmail(email);
-        if(event.getEventStatus() != EventStatus.PROCEED) throw new InvalidModelException("Event");
-        if(participantRepository.getParticipantsByEvent(id).size() + 1 > event.getCapacity())
-            throw new InvalidModelException("Event");
-        Participant participant = request.to(event, member);
+        Participant participant = null;
+        try {
+            participantRepository.getLock("Participant " + id, 1000);
+            if(participantRepository.getParticipant(id, email) != null) throw new AlreadyExistModelException(email);
+            Event event = getExistEvent(id);
+            Member member = memberRepository.findMemberByEmail(email);
+            if(event.getEventStatus() != EventStatus.PROCEED) throw new InvalidModelException("Event");
+            if(participantRepository.getParticipantsByEvent(id).size() + 1 > event.getCapacity())
+                throw new InvalidModelException("Event");
+            participant = request.to(event, member);
+        } finally {
+            participantRepository.releaseLock("Participant " + id);
+        }
         return ParticipateResponse.from(participantRepository.save(participant));
     }
 
@@ -83,6 +93,7 @@ public class ParticipantServiceImpl implements ParticipantService{
     }
 
     @Override
+    @Transactional
     public List<ParticipateResponse> setParticipantsStatusWait(Long id) {
         List<Participant> list = participantRepository.getParticipantsByEvent(id);
         for (Participant participant : list) {

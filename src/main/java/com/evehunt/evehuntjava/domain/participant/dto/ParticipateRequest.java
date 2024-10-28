@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(force = true)
 public class ParticipateRequest {
-    @NotNull
+
     private final String answer;
 
     @NotNull

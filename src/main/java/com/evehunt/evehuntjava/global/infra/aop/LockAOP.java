@@ -42,11 +42,11 @@ public class LockAOP{
                  lockName.append((Long) parameterValues[i]);
                  break;
              }
-        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         RLock rLock = redissonClient.getLock(lockName.toString());
-        boolean available = rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS);
+        TransactionStatus status = transactionManager.getTransaction(new DefaultTransactionDefinition());
         try {
-            if(!available){
+            System.out.println("Lock " + lockName);
+            if(!rLock.tryLock(waitTime, leaseTime, TimeUnit.SECONDS)){
                 throw new LockTimeoutException(lockName.toString());
             }
             try {
@@ -54,12 +54,15 @@ public class LockAOP{
                 transactionManager.commit(status);
                 return ret;
             } catch (RuntimeException e) {
-              transactionManager.commit(status);
+              transactionManager.rollback(status);
               throw new LockTimeoutException(lockName.toString());
             }
         } finally {
             if (rLock.isHeldByCurrentThread()) {
+                System.out.println("UnLock " + lockName);
                 rLock.unlock();
+            } else {
+                throw new LockTimeoutException(lockName.toString());
             }
         }
     }
