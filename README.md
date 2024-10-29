@@ -2,7 +2,7 @@
 ## 개요
 - 프로젝트 소개: 이벤트 열 수 있는 사이트
 - 프로젝트 계기: 각종 커뮤니티에서 간단하게 이벤트를 여는 경우가 있다. 이러한 이벤트를 간편하게 열고 참여할 수 있는 사이트가 있으면 좋겠다고 생각을 하여 사이트를 만들었다.<br>
-이 프로젝트는 Kotlin으로 먼저 개발되었고, 그것을 바탕으로 Java로 변환하였다.
+이 프로젝트는 [Kotlin](https://github.com/tlsgkdns/EveHunt)으로 먼저 개발되었고, 그것을 바탕으로 Java로 변환하였다.
 - 프로젝트 기간: 2024.06 ~ 2024.08, Java 변환 기간: 2024.10
 - 프로젝트 인원: 1인
 - 프론트엔드 링크: [EveHuntVue](https://github.com/tlsgkdns/EveHuntVue)
@@ -13,18 +13,23 @@
 ## ERD
 <img src="https://github.com/user-attachments/assets/70e86498-4747-4a86-8c65-d8a25bd8a1a3">
 
+## 포로젝트 구조
+<img src="https://github.com/user-attachments/assets/808b5675-6057-43ad-aa7b-7745fa26e5c3">
+
+- 파사드 패턴을 활용하여, 더욱 깔끔한 코드를 구성할 수 있게 되었다.
+
 ## 기술 스택
 - 프론트엔드: <img src="https://img.shields.io/badge/vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=black"><img src="https://img.shields.io/badge/Css-1572B6?style=for-the-badge&logo=css&logoColor=white">
 - 백엔드: <img src="https://img.shields.io/badge/SpringBoot-6DB33F?style=for-the-badge&logo=Spring Boot&logoColor=black"><img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white">
-- 데이터베이스: <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white"><img src="https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=redis&logoColor=white"><img src="https://img.shields.io/badge/H2-2439A1?style=for-the-badge&logoColor=white">
+- 데이터베이스: <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white"><img src="https://img.shields.io/badge/H2-2439A1?style=for-the-badge&logoColor=white">
 - 성능 테스트: <img src="https://img.shields.io/badge/nGrinder-ECD53F?style=for-the-badge&logo=ngrinder&logoColor=white">
 - ORM: <img src="https://img.shields.io/badge/JPA-F37C20?style=for-the-badge&logoColor=white">
 ### 주요 사용 이유
 - <img src="https://img.shields.io/badge/vue.js-4FC08D?style=for-the-badge&logo=vue.js&logoColor=black">: Vue.js가 러닝커브가 낮았기 때문에 이것을 선택하였다.
 - <img src="https://img.shields.io/badge/Java-007396?style=for-the-badge&logo=java&logoColor=white">: JVM 환경에서 플랫폼에 구애받지 않고, 안정적으로 개발할 수 있기에 골랐다.
 - <img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white">: 무료로 제공되고, 빠르고 안정적이기에 사용하였다.
-- <img src="https://img.shields.io/badge/H2-2439A1?style=for-the-badge&logoColor=white">: 스트 코드의 데이터베이스를 위해 간단하게 사용할 수 있어서 사용하였다.
-- <img src="https://img.shields.io/badge/Redis-FF4438?style=for-the-badge&logo=redis&logoColor=white">: 동시성 문제를 해결하기 위한 분산락을 도입하였다. 초기엔 비싼 리소스였기에 Named Lock을 사용했다. 하지만, 테스트 코드 작성 때, H2 데이터베이스 사용으로 인해 Named Lock 사용이 어려울 것이라 느껴져서, Redis로 전환했다.
+- <img src="https://img.shields.io/badge/H2-2439A1?style=for-the-badge&logoColor=white">: 테스트 코드의 데이터베이스를 위해 간단하게 사용할 수 있어서 사용하였다.
+
 ## 기능
 - Spring Security를 사용한 회원 기능: 손쉬운 회원가입/로그인 기능의 구현이 가능했고, JWT를 이용해 보안성을 향상했다.
 - QueryDSL을 활용한 검색 기능: 제목, 개최자, 태그, 종료일 등 여러 기준으로의 키워드와 비슷한 기준으로의 정렬 순서를 정해서 검색하여, 여러 이벤트에 접근성을 향상 시켰다.
@@ -49,14 +54,65 @@
 통합 테스트 도중, 회원가입과 이벤트 결과 처리 등에서 갑작스런 성능 저하로 인해 페이지가 늦게 리다이렉트 되는 것을 확인하였다.
 확인 결과, 메일 서비스가 오래 걸려서 다음 행동을 취할 수 없다란 결론을 내렸다.
 이에 메일 서비스를 비동기로 수정해서 사용자에게 아직 메일을 보내지 않더라도 서비스를 이용할 수 있도록 수정했다.
-
+```
+@Async
+@Transactional
+public void sendMail(@NotNull String email, @NotNull String title, @NotNull String content) throws MessagingException {
+    if (email.matches("^[a-zA-Z0-9+-\\_.]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")) {
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+        helper.setTo(email);
+        helper.setSubject(title);
+        helper.setText(content);
+        helper.setFrom(from);
+        this.javaMailSender.send(message);
+    }
+}
+```
 하지만 다른 문제가 발생하였는데, 10명 이상의 인원에게 메일을 보낼때 오류가 발생했다.
+
+<img src="https://github.com/user-attachments/assets/f6e95506-ee9d-480e-8388-81573eac3320">
+
 추론 결과, 너무 많은 스레드가 구글 메일에 접근해서 발생한 오류로 생각했다. 그렇기에 나는 다음과 같은 시도를 하였다.
 1. 비동기 파라미터 수정
 - 스레드 풀 수를 줄이고 태스크 대기 큐을 늘려서, 메일 서비스에 접근하는 스레드 수를 줄였다.
 - 10명 남짓한 인원의 한계가 100명으로 늘어났지만 목표치인 1000명에 다다르지 못했다.
+```
+@EnableAsync
+@Configuration
+public class AsyncConfig implements AsyncConfigurer {
+    @Bean
+    @NotNull
+    public Executor getAsyncExecutor() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(10);
+        executor.setMaxPoolSize(15);
+        executor.setQueueCapacity(100);
+        executor.initialize();
+        return executor;
+    }
+}
+
+```
 2. Scheduler 활용
 - 한 번에 메일을 보내서 문제가 발생한 것이라면, 메일을 나눠서 보내는 것이 어떨까란 생각으로 전환햇다.
+```
+@Scheduled(fixedDelay = 100000L)
+public void sendMails() throws MessagingException {
+    mailService.sendMails();
+}
+```
+```
+@Transactional
+public void sendMails() throws MessagingException {
+    List<Mail> mailList = mailRepository.getUnsentMails();
+    for(Mail mail : mailList)
+    {
+       sendMail(mail.getEmail(), mail.getTitle(), mail.getMailTxt());
+       mail.setSent(true);
+    }
+}
+```
 - 데이터베이스에 Mail 테이블을 만들어서, 메일을 보내는 대신에, 이 테이블에 저장하고, Scheduler가 정기적으로 아직 보내지 않은 Mail들을 부분적으로 가져와서, 보내는 파라다임으로 수정하였다.
 - 오류 없이 안정적으로 메일이 보내지는 것을 확인해서, 이 방법을 택하였다.
 
