@@ -5,8 +5,8 @@ import com.evehunt.evehuntjava.domain.event.service.EventService;
 import com.evehunt.evehuntjava.domain.mail.service.MailService;
 import com.evehunt.evehuntjava.domain.member.dto.MemberRegisterRequest;
 import com.evehunt.evehuntjava.domain.member.service.MemberService;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantRequest;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.domain.participant.service.ParticipantService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -63,7 +63,7 @@ public class EventTests {
     {
         hostEvent();
         participantService.participateEvent(eventId,
-                String.valueOf(1).repeat(2) + "@aaaaaaver.com", new ParticipateRequest("Winner Pick"));
+                String.valueOf(1).repeat(2) + "@aaaaaaver.com", new ParticipantRequest("Winner Pick"));
     }
     @Test
     void testMultiThreadEnvironment() throws InterruptedException {
@@ -76,12 +76,12 @@ public class EventTests {
             long finalId = id;
             executorService.execute(() -> {
                 participantService.participateEvent(eventId,
-                        String.valueOf(finalId).repeat(2) + "@aaaaaaver.com", new ParticipateRequest("Winner Pick"));
+                        String.valueOf(finalId).repeat(2) + "@aaaaaaver.com", new ParticipantRequest("Winner Pick"));
                 countDownLatch.countDown();
             });
         }
         countDownLatch.await();
-        List<ParticipateResponse> list = participantService.getParticipantsByEvent(eventId);
+        List<ParticipantResponse> list = participantService.getParticipantsByEvent(eventId);
         System.out.println(list.size());
     }
 }

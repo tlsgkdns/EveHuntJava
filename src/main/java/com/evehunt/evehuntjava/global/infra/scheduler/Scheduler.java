@@ -40,9 +40,7 @@ public class Scheduler {
     public void clearCache() {
     }
 
-    @Scheduled(
-            fixedDelay = 100000L
-    )
+    @Scheduled(fixedDelay = 100000L)
     public void sendMails() throws MessagingException {
         mailService.sendMails();
     }

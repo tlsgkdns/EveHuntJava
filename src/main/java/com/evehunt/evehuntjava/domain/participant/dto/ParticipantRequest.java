@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(force = true)
-public class ParticipateRequest {
+public class ParticipantRequest {
 
     private final String answer;
 
@@ -21,7 +21,7 @@ public class ParticipateRequest {
         return this.answer;
     }
 
-    public ParticipateRequest(@NotNull String answer) {
+    public ParticipantRequest(@NotNull String answer) {
         this.answer = answer;
     }
 }

@@ -37,7 +37,7 @@ public class MailServiceImpl implements MailService{
 
     @Transactional
     public void sendMails() throws MessagingException {
-        List<Mail> mailList = this.mailRepository.getUnsentMails();
+        List<Mail> mailList = mailRepository.getUnsentMails();
         for(Mail mail : mailList)
         {
             sendMail(mail.getEmail(), mail.getTitle(), mail.getMailTxt());

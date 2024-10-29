@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(force = true)
-public class ParticipateResponse {
+public class ParticipantResponse {
     private final Long id;
 
     private final Long eventId;
@@ -26,7 +26,7 @@ public class ParticipateResponse {
     }
 
 
-    public ParticipateResponse(Long id, Long eventId, Long memberId,
+    public ParticipantResponse(Long id, Long eventId, Long memberId,
                                @NotNull String answer, @NotNull ParticipantStatus status, String email) {
         this.id = id;
         this.eventId = eventId;
@@ -36,8 +36,8 @@ public class ParticipateResponse {
         this.email = email;
     }
 
-    public static ParticipateResponse from(@NotNull Participant participant) {
-        return new ParticipateResponse(participant.getId(), participant.getEvent().getId(), participant.getParticipant().getId(),
+    public static ParticipantResponse from(@NotNull Participant participant) {
+        return new ParticipantResponse(participant.getId(), participant.getEvent().getId(), participant.getParticipant().getId(),
                 participant.getAnswer(), participant.getStatus(), participant.getParticipant().getEmail());
     }
 }

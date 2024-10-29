@@ -2,8 +2,8 @@ package com.evehunt.evehuntjava.domain.event.service;
 
 import com.evehunt.evehuntjava.domain.event.dto.*;
 import com.evehunt.evehuntjava.domain.participant.dto.EventWinnerRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantRequest;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.domain.tag.dto.TagAddRequest;
 import com.evehunt.evehuntjava.domain.tag.dto.TagResponse;
 import com.evehunt.evehuntjava.global.common.page.PageRequest;
@@ -29,7 +29,7 @@ public interface EventService {
     List<EventIdResponse> setExpiredEventsClose();
 
     @NotNull
-    ParticipateResponse participateEvent(Long eventId, @NotNull String email, @NotNull ParticipateRequest request);
+    ParticipantResponse participateEvent(Long eventId, @NotNull String email, @NotNull ParticipantRequest request);
 
     void resignEventParticipate(Long eventId, @NotNull String email);
 
@@ -37,13 +37,13 @@ public interface EventService {
     List<EventCardResponse> getPopularEvent();
 
     @NotNull
-    List<ParticipateResponse> setEventResult(Long eventId, @NotNull EventWinnerRequest request);
+    List<ParticipantResponse> setEventResult(Long eventId, @NotNull EventWinnerRequest request);
 
     @NotNull
-    List<ParticipateResponse> getParticipants(Long eventId);
+    List<ParticipantResponse> getParticipants(Long eventId);
 
     @NotNull
-    ParticipateResponse getParticipant(Long eventId, @NotNull String email);
+    ParticipantResponse getParticipant(Long eventId, @NotNull String email);
 
     @NotNull
     List<TagResponse> getTags(Long eventId);

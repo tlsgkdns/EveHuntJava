@@ -2,7 +2,7 @@ package com.evehunt.evehuntjava.domain.member.api;
 
 import com.evehunt.evehuntjava.domain.member.dto.*;
 import com.evehunt.evehuntjava.domain.member.service.MemberService;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.global.common.page.PageRequest;
 import com.evehunt.evehuntjava.global.common.page.PageResponse;
 import com.evehunt.evehuntjava.global.exception.exception.InvalidRequestException;
@@ -90,7 +90,7 @@ public class MemberController {
 
     @GetMapping({"/events"})
     @NotNull
-    public ResponseEntity<PageResponse<ParticipateResponse>> getParticipateHistoryByMember(@AuthenticationPrincipal @NotNull UserDetails user, @NotNull PageRequest pageRequest) {
+    public ResponseEntity<PageResponse<ParticipantResponse>> getParticipateHistoryByMember(@AuthenticationPrincipal @NotNull UserDetails user, @NotNull PageRequest pageRequest) {
         System.out.println(user);
         return ResponseEntity.status(HttpStatus.OK).body(memberService.getParticipatedEvents(pageRequest, user.getUsername()));
     }

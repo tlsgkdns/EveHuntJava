@@ -6,8 +6,8 @@ import com.evehunt.evehuntjava.domain.mail.dto.MailRequest;
 import com.evehunt.evehuntjava.domain.mail.service.MailService;
 import com.evehunt.evehuntjava.domain.member.service.MemberService;
 import com.evehunt.evehuntjava.domain.participant.dto.EventWinnerRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantRequest;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.domain.participant.model.ParticipantStatus;
 import com.evehunt.evehuntjava.domain.participant.service.ParticipantService;
 import com.evehunt.evehuntjava.domain.tag.dto.TagAddRequest;
@@ -83,10 +83,10 @@ public class EventServiceImpl implements EventService{
     @Transactional
 
     @Override
-    public ParticipateResponse participateEvent(Long eventId, String email, ParticipateRequest request) {
+    public ParticipantResponse participateEvent(Long eventId, String email, ParticipantRequest request) {
         EventResponse event = getEvent(eventId);
         if(event.getStatus() != EventStatus.PROCEED) throw new InvalidModelException("Event");
-        ParticipateResponse participant = participantService.participateEvent(eventId, email, request);
+        ParticipantResponse participant = participantService.participateEvent(eventId, email, request);
         if(event.getCapacity() == participantService.getParticipantCount(eventId))
             eventEntityService.closeEvent(eventId);
         return participant;
@@ -104,10 +104,10 @@ public class EventServiceImpl implements EventService{
 
     @CheckEventLoginMember
     @Override
-    public List<ParticipateResponse> setEventResult(Long eventId, EventWinnerRequest request) {
-        List<ParticipateResponse> list = participantService.setEventResult(eventId, request);
+    public List<ParticipantResponse> setEventResult(Long eventId, EventWinnerRequest request) {
+        List<ParticipantResponse> list = participantService.setEventResult(eventId, request);
         String title = eventEntityService.getEvent(eventId).getTitle();
-        for(ParticipateResponse participant : list)
+        for(ParticipantResponse participant : list)
         {
             String email = memberService.getMember(participant.getMemberId()).getEmail();
             String resultMessage = "";
@@ -121,12 +121,12 @@ public class EventServiceImpl implements EventService{
     }
 
     @Override
-    public List<ParticipateResponse> getParticipants(Long eventId) {
+    public List<ParticipantResponse> getParticipants(Long eventId) {
         return participantService.getParticipantsByEvent(eventId);
     }
 
     @Override
-    public ParticipateResponse getParticipant(Long eventId, String email) {
+    public ParticipantResponse getParticipant(Long eventId, String email) {
         return participantService.getParticipant(eventId, email);
     }
 

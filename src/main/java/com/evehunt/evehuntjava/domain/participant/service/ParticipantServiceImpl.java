@@ -6,20 +6,18 @@ import com.evehunt.evehuntjava.domain.event.repository.EventRepository;
 import com.evehunt.evehuntjava.domain.member.model.Member;
 import com.evehunt.evehuntjava.domain.member.repository.MemberRepository;
 import com.evehunt.evehuntjava.domain.participant.dto.EventWinnerRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateRequest;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantRequest;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.domain.participant.model.Participant;
 import com.evehunt.evehuntjava.domain.participant.model.ParticipantStatus;
 import com.evehunt.evehuntjava.domain.participant.model.strategy.PickWinnerStrategy;
 import com.evehunt.evehuntjava.domain.participant.model.strategy.PickWinnerTwoPointer;
 import com.evehunt.evehuntjava.domain.participant.repository.ParticipantRepository;
-import com.evehunt.evehuntjava.global.common.NamedLockRepository;
 import com.evehunt.evehuntjava.global.common.page.PageRequest;
 import com.evehunt.evehuntjava.global.common.page.PageResponse;
 import com.evehunt.evehuntjava.global.exception.exception.AlreadyExistModelException;
 import com.evehunt.evehuntjava.global.exception.exception.InvalidModelException;
 import com.evehunt.evehuntjava.global.exception.exception.ModelNotFoundException;
-import com.evehunt.evehuntjava.global.infra.aop.annotation.RedisLock;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -46,7 +44,7 @@ public class ParticipantServiceImpl implements ParticipantService{
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Override
-    public ParticipateResponse participateEvent(Long id, String email, ParticipateRequest request) {
+    public ParticipantResponse participateEvent(Long id, String email, ParticipantRequest request) {
         Participant participant = null;
         try {
             participantRepository.getLock("Participant " + id, 1000);
@@ -60,7 +58,7 @@ public class ParticipantServiceImpl implements ParticipantService{
         } finally {
             participantRepository.releaseLock("Participant " + id);
         }
-        return ParticipateResponse.from(participantRepository.save(participant));
+        return ParticipantResponse.from(participantRepository.save(participant));
     }
 
     @Override
@@ -69,38 +67,38 @@ public class ParticipantServiceImpl implements ParticipantService{
     }
 
     @Override
-    public List<ParticipateResponse> setEventResult(Long id, EventWinnerRequest request) {
+    public List<ParticipantResponse> setEventResult(Long id, EventWinnerRequest request) {
         List<Participant> participantList = participantRepository.getParticipantsByEvent(id);
         List<Participant> winnerList = pickWinnerStrategy.pick(participantList, request.getEventWinners());
-        return winnerList.stream().map(ParticipateResponse::from).toList();
+        return winnerList.stream().map(ParticipantResponse::from).toList();
     }
 
     @Override
-    public PageResponse<ParticipateResponse> getParticipateHistoryByMember(String email, PageRequest request) {
+    public PageResponse<ParticipantResponse> getParticipateHistoryByMember(String email, PageRequest request) {
         Page<Participant> pages = participantRepository.getParticipantsByMember(request.getPageable(), email);
-        List<ParticipateResponse> content = pages.getContent().stream().map(ParticipateResponse::from).toList();
+        List<ParticipantResponse> content = pages.getContent().stream().map(ParticipantResponse::from).toList();
         return PageResponse.of(request, content, pages.getTotalPages());
     }
 
     @Override
-    public List<ParticipateResponse> getParticipantsByEvent(Long id) {
-        return participantRepository.getParticipantsByEvent(id).stream().map(ParticipateResponse::from).toList();
+    public List<ParticipantResponse> getParticipantsByEvent(Long id) {
+        return participantRepository.getParticipantsByEvent(id).stream().map(ParticipantResponse::from).toList();
     }
 
     @Override
-    public ParticipateResponse getParticipant(Long id, String email) {
-        return ParticipateResponse.from(getExistParticipant(id, email));
+    public ParticipantResponse getParticipant(Long id, String email) {
+        return ParticipantResponse.from(getExistParticipant(id, email));
     }
 
     @Override
     @Transactional
-    public List<ParticipateResponse> setParticipantsStatusWait(Long id) {
+    public List<ParticipantResponse> setParticipantsStatusWait(Long id) {
         List<Participant> list = participantRepository.getParticipantsByEvent(id);
         for (Participant participant : list) {
             participant.setStatus(ParticipantStatus.WAIT_RESULT);
             participantRepository.save(participant);
         }
-        return list.stream().map(ParticipateResponse::from).toList();
+        return list.stream().map(ParticipantResponse::from).toList();
     }
 
     @Override

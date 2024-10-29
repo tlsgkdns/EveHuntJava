@@ -3,7 +3,7 @@ package com.evehunt.evehuntjava.domain.member.service;
 import com.evehunt.evehuntjava.domain.mail.dto.MailRequest;
 import com.evehunt.evehuntjava.domain.mail.service.MailService;
 import com.evehunt.evehuntjava.domain.member.dto.*;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.domain.participant.service.ParticipantService;
 import com.evehunt.evehuntjava.global.common.page.PageRequest;
 import com.evehunt.evehuntjava.global.common.page.PageResponse;
@@ -76,7 +76,7 @@ public class MemberServiceImpl implements MemberService{
     }
 
     @Override
-    public PageResponse<ParticipateResponse> getParticipatedEvents(PageRequest request, String email) {
+    public PageResponse<ParticipantResponse> getParticipatedEvents(PageRequest request, String email) {
         return participantService.getParticipateHistoryByMember(email, request);
     }
 

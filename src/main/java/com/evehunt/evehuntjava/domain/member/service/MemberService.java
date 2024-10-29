@@ -1,7 +1,7 @@
 package com.evehunt.evehuntjava.domain.member.service;
 
 import com.evehunt.evehuntjava.domain.member.dto.*;
-import com.evehunt.evehuntjava.domain.participant.dto.ParticipateResponse;
+import com.evehunt.evehuntjava.domain.participant.dto.ParticipantResponse;
 import com.evehunt.evehuntjava.global.common.page.PageRequest;
 import com.evehunt.evehuntjava.global.common.page.PageResponse;
 import jakarta.validation.constraints.NotNull;
@@ -30,7 +30,7 @@ public interface MemberService {
     void deleteAllMember();
 
     @NotNull
-    PageResponse<ParticipateResponse> getParticipatedEvents(@NotNull PageRequest request, @NotNull String email);
+    PageResponse<ParticipantResponse> getParticipatedEvents(@NotNull PageRequest request, @NotNull String email);
 
     @NotNull
     MemberResponse editPassword(Long id, @NotNull MemberPasswordEditRequest request);
