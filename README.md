@@ -32,9 +32,9 @@
 
 ## 기능
 - Spring Security를 사용한 회원 기능: 손쉬운 회원가입/로그인 기능의 구현이 가능했고, JWT를 이용해 보안성을 향상했다.
-- QueryDSL을 활용한 검색 기능: 제목, 개최자, 태그, 종료일 등 여러 기준으로의 키워드와 비슷한 기준으로의 정렬 순서를 정해서 검색하여, 여러 이벤트에 접근성을 향상 시켰다.
-- 이벤트 개최 기능: 이벤트 개최시, 제목, 상세, 태그, 종료일, 사진 등을 설정할 수 있다 Scheduler를 사용해서 종료일이 지날 시 자동적으로 이벤트가 종료하도록 설정하여 개최자를 편의성을 높였다. [코드 참조](https://github.com/tlsgkdns/EveHuntJava/blob/master/src/main/java/com/evehunt/evehuntjava/domain/event/repository/QueryDslEventRepositoryImpl.java)
-- 이벤트 참여 기능: 분산 락을 도입해 정확한 참여자 카운팅을 지원해, 일관성 있는 이벤트 참여를 제공한다.
+- QueryDSL을 활용한 검색 기능: 제목, 개최자, 태그, 종료일 등 여러 기준으로의 키워드와 비슷한 기준으로의 정렬 순서를 정해서 검색하여, 여러 이벤트에 접근성을 향상 시켰다.[코드 참조](https://github.com/tlsgkdns/EveHuntJava/blob/master/src/main/java/com/evehunt/evehuntjava/domain/event/repository/QueryDslEventRepositoryImpl.java)
+- 이벤트 개최 기능: 이벤트 개최시, 제목, 상세, 태그, 종료일, 사진 등을 설정할 수 있다 Scheduler를 사용해서 종료일이 지날 시 자동적으로 이벤트가 종료하도록 설정하여 개최자를 편의성을 높였다. 
+- 이벤트 참여 기능: MySQL의 Named Lock을 도입해 정확한 참여자 카운팅을 지원해, 일관성 있는 이벤트 참여를 제공한다.
 - 신고 기능: 권한 기능을 통해 Admin만이 접근할 수 있는 페이지 도입. 신고가 들어오면, 이 페이지를 통해 신고를 처리해서 이벤트 개최 정지 기능 지원해 양질의 이벤트를 제공한다. Scheduler로 자동적으로 정지를 해제해 admin의 편의성을 높였다.
 - 당첨자 추첨 기능:  랜덤 추첨 기능을 지해 주최자의 편의성을 고려하였고 당첨 결과는 이메일로 발송 가능하다. 당첨자마다의 메시지 수정 기능으로 서드 파티 도움 없이 편리하게 유저의 고유성 부여할 수 있다.
 - 인기 이벤트 / 태그 캐싱: 자주 사용된 태그와 참여된 이벤트를 Home 화면에 보여주고, 캐싱 기능을 통한 빠른 접근으로 서버의 부담감을 줄였다.
