@@ -13,7 +13,7 @@
 ## ERD
 <img src="https://github.com/user-attachments/assets/70e86498-4747-4a86-8c65-d8a25bd8a1a3">
 
-## 포로젝트 구조
+## 프로젝트 구조
 <img src="https://github.com/user-attachments/assets/808b5675-6057-43ad-aa7b-7745fa26e5c3">
 
 - 파사드 패턴을 활용하여, 더욱 깔끔한 코드를 구성할 수 있게 되었다.
